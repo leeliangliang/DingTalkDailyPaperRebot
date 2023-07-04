@@ -3,7 +3,6 @@ from dingtalkchatbot.chatbot import DingtalkChatbot
 import holidays
 from apscheduler.schedulers.blocking import BlockingScheduler
 import os
-
 # 获取环境变量中的参数
 parameter = os.environ.get('access_token')
 secret = os.environ.get('secret')
@@ -30,14 +29,15 @@ def schedule_send_message():
     if not is_holiday(current_date):
         message = '@所有人 请发送今日日报。'
         send_dingtalk_message(message)
-
+    else:
+        print("节假日不发送:")
 
 def startTask():
     # 创建调度器
-    scheduler = BlockingScheduler()
+    scheduler = BlockingScheduler(timezone='Asia/Shanghai')
     # 添加定时任务
-    # scheduler.add_job(schedule_send_message, 'cron', hour=17, minute=30)
-    scheduler.add_job(schedule_send_message, 'interval', seconds=5)
+    scheduler.add_job(schedule_send_message, 'cron', hour=17, minute=30)
+    # scheduler.add_job(schedule_send_message, 'interval', seconds=5)
     # 启动调度器
     scheduler.start()
 
