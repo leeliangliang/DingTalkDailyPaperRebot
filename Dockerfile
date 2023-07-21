@@ -8,7 +8,10 @@ WORKDIR /app
 COPY . /app
 
 # 安装所需的依赖
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
+
+# 升级数据库
+RUN flask db upgrade
 
 # 运行 Python 脚本
 CMD [ "python", "app.py" ]
