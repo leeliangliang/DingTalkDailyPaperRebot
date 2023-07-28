@@ -11,7 +11,9 @@ COPY . /app
 RUN pip install -r requirements.txt
 
 # 升级数据库
-RUN flask db upgrade
+# RUN flask db upgrade
 
 # 运行 Python 脚本
-CMD [ "python", "app.py" ]
+# CMD ["flask", "db", "upgrade", "&&", "python", "run.py" ]
+RUN chmod u+x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
