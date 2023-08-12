@@ -10,12 +10,16 @@ class ClashSubscribe(db.Model):
     url = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'<ClashSubscribe {self.url}>'
+        return f'[id:{self.id} |  url: {self.url}]'
 
 @app.route('/clash')
 def clash():
     # 数据对象
-    urls = request.args.getlist('urls')
+    tasks = ClashSubscribe.query.all()
+    urls = []
+    for model in tasks:
+        urls.append(model.url)
+
     data = {
         "url": '|'.join(urls),
         "insert": "false",
@@ -33,29 +37,34 @@ def clash():
     response = requests.get('http://subconverter:25500/clash?' + text)
     return Response(response.text, status=response.status_code, content_type=response.headers['content-type'])
 
-@app.route('/')
-def index():
-
+@app.route('/clashindex')
+def clashindex():
+    tasks = ClashSubscribe.query.all()
     return render_template('clash.html', tasks=tasks)
 
 @app.route('/add', methods=['POST'])
 def add():
     task = request.form.get('task')
-    tasks.append(task)
-    return redirect(url_for('index'))
+    new_task = ClashSubscribe(url=task)
+    db.session.add(new_task)
+    db.session.commit()
+    return redirect(url_for('clashindex'))
 
 @app.route('/delete/<int:index>')
 def delete(index):
-    if index < len(tasks):
-        tasks.pop(index)
-    return redirect(url_for('index'))
+    task = ClashSubscribe.query.filter_by(id=index).first()
+    if task:
+        db.session.delete(task)
+        db.session.commit()
+    return redirect(url_for('clashindex'))
 
 @app.route('/update/<int:index>', methods=['POST'])
 def update(index):
-    if index < len(tasks):
-        new_task = request.form.get('new_task')
-        tasks[index] = new_task
-    return redirect(url_for('index'))
+    task = ClashSubscribe.query.filter_by(id=index).first()
+    if task:
+        task.url = request.form.get('new_task')
+        db.session.commit()
+    return redirect(url_for('clashindex'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -24,7 +24,7 @@ def login():
         if user and user.password == password:
             # 登录成功，设置会话并重定向到后台页面
             session['username'] = username
-            return redirect(url_for('admin'))
+            return redirect(url_for('clashindex'))
         else:
             # 登录失败，显示错误信息
             error_message = 'Invalid username or password'
