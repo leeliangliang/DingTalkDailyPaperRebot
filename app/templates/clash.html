@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>clash List</title>
+</head>
+<body>
+    <h1>Task List</h1>
+    <ul>
+        {% for task in tasks %}
+            <li>{{ task }} <a href="{{ url_for('delete', index=loop.index0) }}">Delete</a></li>
+        {% endfor %}
+    </ul>
+    <form method="POST" action="/add">
+        <input type="text" name="task" placeholder="New Task" required>
+        <button type="submit">Add Task</button>
+    </form>
+    <h2>Update Task</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task }}
+                <form method="POST" action="{{ url_for('update', index=loop.index0) }}">
+                    <input type="text" name="new_task" placeholder="New Task" required>
+                    <button type="submit">Update</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
